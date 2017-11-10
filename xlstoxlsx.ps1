@@ -1,25 +1,29 @@
 ﻿
-$word = New-Object -ComObject excel.application 
-$word.visible = $false 
+$excel = New-Object -ComObject excel.application 
+$excel.visible = $false 
 $folderpath = Read-Host 'Path?'
 $folderpath2 = $folderpath + '\*'
 $fileType = "*xls" 
-Get-ChildItem -recurse -path $folderpath2 -include $fileType | 
+Get-ChildItem -Force -recurse -path $folderpath2 -include $fileType -ErrorAction SilentlyContinue | 
 foreach-object { 
 $path = ($_.fullname).substring(0,($_.FullName).lastindexOf(".")) 
-$docxpath =($_.fullname).substring(0,($_.FullName).lastindexOf(".")) + ".xlsx" 
-Write-Host "$docxpath"
-
-  if (test-path $docxpath) {Write-Host "Skip $docxpath"
+$xlsxpath =($_.fullname).substring(0,($_.FullName).lastindexOf(".")) + ".xlsx" 
+  if (test-path -literal $xlsxpath) {
  }
 else {
-"Converting $path to $fileType ..."
- $doc = $Word.workbooks.open($_.fullname) 
-$doc.saveas($path, [Microsoft.Office.Interop.Excel.XLFileFormat]::xlWorkbookDefault) 
-$doc.close() 
+try {
+write-output "Converting $path to $fileType ..."
+ $excel = $excel.workbooks.open($_.fullname) 
+$excel.saveas($xlsxpath, [Microsoft.Office.Interop.Excel.XLFileFormat]::xlWorkbookDefault) 
+$excel.close() 
+  }
+
+  
+  catch{
+  Write-Output "$path couldnt be converted"
   }
 }
-$word.Quit() 
-$word = $null 
+$excel.Quit() 
+$excel = $null 
 [gc]::collect() 
 [gc]::WaitForPendingFinalizers()
