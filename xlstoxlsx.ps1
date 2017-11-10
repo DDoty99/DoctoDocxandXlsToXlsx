@@ -23,6 +23,7 @@ $excel.close()
   Write-Output "$path couldnt be converted"
   }
 }
+}
 $excel.Quit() 
 $excel = $null 
 [gc]::collect() 
