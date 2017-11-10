@@ -20,7 +20,7 @@ $excel.close()
 
   
   catch{
-  Write-Output "$path couldnt be converted"
+  Write-Output "$path couldnt be converted"  -foregroundcolor "red"
   }
 }
 }
